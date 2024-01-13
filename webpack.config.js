@@ -33,7 +33,7 @@ module.exports = {
         test: /\.(png|svg|jpg|jpeg|gif)$/,
         type: 'asset/resource',
         generator: {
-          filename: 'images/[name][ext]',
+          filename: './images/[name][ext]',
         },
       },
       {
@@ -59,7 +59,7 @@ module.exports = {
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: './src/pages/[name].css',
+      filename: './[name].css',
     })
   ]
 };

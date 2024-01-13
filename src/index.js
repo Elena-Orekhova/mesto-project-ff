@@ -1,6 +1,6 @@
 import './pages/index.css';
 import { initialCards, createCard, likeCards } from './scripts/cards';
-import { closeModal, openModal } from './scripts/modal';
+import { closeModal, openModal, popupEdit } from './scripts/modal';
 
 //глобальные переменные
 const cardsContainer = document.querySelector('.places__list');
@@ -22,15 +22,16 @@ initialCards.forEach(function (item) {
 
 // попап "редактировать"
 //открыть 
-const popupEdit = document.querySelector('.popup_type_edit');
 const editButtonProfile = document.querySelector('.profile__edit-button');
-editButtonProfile.addEventListener ('click', () => openModal(popupEdit))
+
+editButtonProfile.addEventListener ('click', () => openModal(popupEdit));
 
 // попап "+"
 //открыть
 const popupNewCard = document.querySelector('.popup_type_new-card');
 const addButtonProfile = document.querySelector('.profile__add-button');
-addButtonProfile.addEventListener ('click', () => openModal(popupNewCard))
+
+addButtonProfile.addEventListener ('click', () => openModal(popupNewCard));
 
 // Добавление новой карточки
 const formNewCardElement = document.querySelector('.popup__form[name="new-place"]');
@@ -39,6 +40,7 @@ formNewCardElement.addEventListener('submit', handleNewCardSubmit);
 
 function handleNewCardSubmit(evt) {
   evt.preventDefault();
+
   const placeNameInput = formNewCardElement.querySelector('.popup__input_type_card-name');
   const linkInput = formNewCardElement.querySelector('.popup__input_type_url');
   const newCard = createCard({name: placeNameInput.value, link: linkInput.value});
@@ -51,9 +53,10 @@ function handleNewCardSubmit(evt) {
   closeModal(popupNewCard);
  
   const cardsContainer = document.querySelector('.places__list');
+
   cardsContainer.prepend(newCard);
 }
 
 // поставить лайк карточке
-cardsContainer.addEventListener('click', likeCards)
+cardsContainer.addEventListener('click', likeCards);
 

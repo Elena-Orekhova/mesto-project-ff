@@ -33,35 +33,6 @@ function resetForm() {
   })
 }
 
-//Редактирование имени и информации о себе
-function fillFormProfile() {
-  const profileName = document.querySelector('.profile__title').textContent;
-  const profileDescription = document.querySelector('.profile__description').textContent;
-
-  const nameInput = document.forms['edit-profile']['name'];
-  const descriptionInput = document.forms['edit-profile']['description'];
-
-  nameInput.value = profileName;
-  descriptionInput.value = profileDescription;
-}
-
-//cохранить изменения в профле
-const formElement = document.querySelector('.popup__form');
-const nameInput = formElement.querySelector('.popup__input_type_name')
-const jobInput = formElement.querySelector('.popup__input_type_description')
-
-function handleFormSubmit(evt) {
-  evt.preventDefault();
-
-  const profileNameElement = document.querySelector('.profile__title');
-  const profileDescriptionElement = document.querySelector('.profile__description');
-
-  profileNameElement.textContent = nameInput.value;
-  profileDescriptionElement.textContent = jobInput.value;
-
-  closeModal(popupEdit);
-}
-
 //открытие МО 
 const openModal = (popup) => {
   popup.classList.add('popup_is-opened');
@@ -80,4 +51,34 @@ const closeModal = (popup) => {
   formElement.removeEventListener('submit', handleFormSubmit);
 };
 
-export { openModal, closeModal };
+//Редактирование имени и информации о себе
+function fillFormProfile() {
+  const profileName = document.querySelector('.profile__title').textContent;
+  const profileDescription = document.querySelector('.profile__description').textContent;
+
+  const nameInput = document.forms['edit-profile']['name'];
+  const descriptionInput = document.forms['edit-profile']['description'];
+
+  nameInput.value = profileName;
+  descriptionInput.value = profileDescription;
+}
+
+//cохранить изменения в профле
+const formElement = document.querySelector('.popup__form');
+const nameInput = formElement.querySelector('.popup__input_type_name');
+const jobInput = formElement.querySelector('.popup__input_type_description');
+const popupEdit = document.querySelector('.popup_type_edit');
+
+function handleFormSubmit(evt) {
+  evt.preventDefault();
+
+  const profileNameElement = document.querySelector('.profile__title');
+  const profileDescriptionElement = document.querySelector('.profile__description');
+
+  profileNameElement.textContent = nameInput.value;
+  profileDescriptionElement.textContent = jobInput.value;
+
+  closeModal(popupEdit);
+}
+
+export { openModal, closeModal, popupEdit};
