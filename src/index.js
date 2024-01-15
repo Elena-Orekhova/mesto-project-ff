@@ -1,5 +1,5 @@
 import './pages/index.css';
-import { createCard } from './scripts/card';
+import { createCard, likeCards, removeCard } from './scripts/card';
 import { initialCards } from './scripts/cards';
 import { closeModal, openModal, closeOnOverlay } from './scripts/modal';
 
@@ -35,7 +35,7 @@ const linkInput = formNewCardElement.querySelector('.popup__input_type_url');
 
 function handleNewCardSubmit(evt) {
   evt.preventDefault();
-  const newCard = createCard({name: placeNameInput.value, link: linkInput.value}, openImagePopup);
+  const newCard = createCard({name: placeNameInput.value, link: linkInput.value}, likeCards, removeCard, openImagePopup);
 
   closeModal(popupNewCard);
  
@@ -45,15 +45,15 @@ function handleNewCardSubmit(evt) {
 // открыть попап "редактировать" 
 const editButtonProfile = document.querySelector('.profile__edit-button');
 
-editButtonProfile.addEventListener ('click', () => {
+editButtonProfile.addEventListener ('click', function() {
   fillFormProfile();
   openModal(popupEditProfile);
 });
 
 //Редактирование имени и информации о себе
 function fillFormProfile() {
-  const profileName = document.querySelector('.profile__title').textContent;
-  const profileDescription = document.querySelector('.profile__description').textContent;
+  const profileName = profileNameElement.textContent;
+  const profileDescription = profileDescriptionElement.textContent;
 
   nameInput.value = profileName;
   descriptionInput.value = profileDescription;
@@ -70,7 +70,10 @@ function handleEditProfile(evt) {
 }
 
 // открыть попап "+"
-addButtonProfile.addEventListener ('click', () => openModal(popupNewCard));
+addButtonProfile.addEventListener ('click', function() {
+  openModal(popupNewCard);
+  formNewCardElement.reset();
+})
 
 // открыть попап "открыть картинку"
 const imagePopup = document.querySelector('.popup_type_image');
@@ -86,7 +89,7 @@ function openImagePopup(link, caption) {
 
 // вывод элемента карточки 
 initialCards.forEach(function (item) {
-  const card = createCard(item, openImagePopup);
+  const card = createCard(item, likeCards, removeCard, openImagePopup);
 
   cardsContainer.append(card);
 });
