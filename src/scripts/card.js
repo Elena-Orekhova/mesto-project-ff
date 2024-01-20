@@ -1,38 +1,98 @@
-// заполнение карточки 
-const createCard = (card, likeCards, removeCard, openImagePopup) => {
-  const cardTemplate = document.querySelector('#card-template').content;
-  const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-  const imageElement = cardElement.querySelector('.card__image');
+import { addLikeCard, removeLikeCard, fetchCardDelete } from "./api";
+import { openModal, closeModal } from "./modal";
 
-  cardElement.querySelector('.card__title').textContent = card.name;
-  imageElement.src = card.link;
-  imageElement.alt = card.name;
- 
-  cardElement.querySelector('.card__delete-button').addEventListener('click', removeCard);
+// заполнение карточки
+const createCard = (card, userId, openImagePopup) => {
+  const cardTemplate = document.querySelector("#card-template").content;
+  const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
+  const cardTitleElement = cardElement.querySelector(".card__title");
+  const cardImageElement = cardElement.querySelector(".card__image");
+  const cardImage = cardElement.querySelector(".card__image");
+  const deleteButton = cardElement.querySelector(".card__delete-button");
+  const cardLikeButton = cardElement.querySelector(".card__like-button");
 
-  // поставить лайк карточке
-  const cardLikeButton = cardElement.querySelector('.card__like-button');
-  cardLikeButton.addEventListener('click', likeCards);
+  cardTitleElement.textContent = card.name;
+  cardImageElement.src = card.link;
+  cardImageElement.alt = card.name;
 
-  //Обработчик для открытия попапа с изображением
-  const cardImage = cardElement.querySelector('.card__image');
+  const likes = card.likes;
 
-  cardImage.addEventListener('click', () => openImagePopup(card.link, card.name));
+  // Функция, проверяющая, есть ли ваш идентификатор в массиве лайков карточки
+  const isCurrentUserLiked = likes.some((like) => like._id === userId);
+  if (isCurrentUserLiked) {
+    updateCardView(cardElement, isCurrentUserLiked, likes.length);
+  }
 
+  deleteButton.addEventListener("click", () =>
+    removeCard(card._id, cardElement)
+  );
+
+  cardLikeButton.addEventListener("click", () => {
+    toggleLikeCard(card._id, cardElement);
+    updateCardView(
+      cardElement,
+      !cardLikeButton.classList.contains("card__like-button_is-active"),
+      card.likes.length
+    );
+  });
+
+  cardImage.addEventListener("click", () => openImagePopup(card));
   return cardElement;
 };
 
 // удаление карточки
-const removeCard = (evt) => {
-  const cardItem = evt.target.closest('.places__item');
+const removeCard = (cardId, cardElement) => {
+  const popupDeleteCard = document.querySelector(".popup_type_card-delete");
+  const popupDeleteCardElement =
+    popupDeleteCard.querySelector(".popup__button");
 
-  cardItem.remove();
+  openModal(popupDeleteCard);
+  popupDeleteCardElement.addEventListener("click", () => {
+    fetchCardDelete(cardId)
+      .then(() => {
+        cardElement.remove();
+        closeModal(popupDeleteCard);
+      })
+      .catch((error) => {
+        console.error("Произошла ошибка при удалении карточки:", err);
+        throw error;
+      });
+  });
 };
 
-// лайк
-const likeCards = (evt) => {
-  evt.target.classList.toggle('card__like-button_is-active'); 
+// поставить/снять лайк
+const toggleLikeCard = (cardId, cardElement) => {
+  const isLiked = cardElement
+    .querySelector(".card__like-button")
+    .classList.contains("card__like-button_is-active");
+  if (isLiked) {
+    removeLikeCard(cardId)
+      .then((updatedCard) => {
+        updateCardView(cardElement, false, updatedCard.likes.length);
+      })
+      .catch((error) => {
+        console.error("Произошла ошибка при снятии лайка:", error);
+      });
+  } else {
+    addLikeCard(cardId)
+      .then((updatedCard) => {
+        updateCardView(cardElement, true, updatedCard.likes.length);
+      })
+      .catch((error) => {
+        console.error("Произошла ошибка при постановке лайка:", error);
+      });
+  }
 };
 
-export { createCard, likeCards, removeCard };
+// обновление визуального представления карточки после изменения состояния лайка
+const updateCardView = (cardElement, isLiked, likesCount) => {
+  const cardLikeButton = cardElement.querySelector(".card__like-button");
+  const cardLikeCounter = cardElement.querySelector(
+    ".card__like-button_counter"
+  );
 
+  cardLikeButton.classList.toggle("card__like-button_is-active", isLiked);
+  cardLikeCounter.textContent = likesCount;
+};
+
+export { createCard };

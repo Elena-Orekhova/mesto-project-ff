@@ -1,7 +1,7 @@
 .popup__content {
   max-width: 430px;
   width: 100%;
-  min-height: 330px;
+  min-height: 180px; /* изменение min-height после добавление popup аватара и подтверждения удаления */
   background-color: #fff;
   border-radius: 10px;
   position: relative;
