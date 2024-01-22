@@ -6,56 +6,46 @@ const config = {
   },
 };
 
+function checkResponse(res) {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
+}
+
 // Загрузка данных пользователя
-const userPromise = () => {
+const fetchUserInfo = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers,
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      return Promise.reject(`Ошибка: ${response.status}`);
-    })
-    .catch((error) => {
-      console.error("Произошла ошибка:", error);
-    });
+  }).then((res) => {
+    return checkResponse(res);
+  });
 };
 
 // Загрузка карточек
-const cardsPromise = () => {
+const fetchCardsInfo = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      return Promise.reject(`Ошибка: ${response.status}`);
-    })
-    .catch((error) => {
-      console.error("Произошла ошибка:", error);
-    });
+  }).then((res) => {
+    return checkResponse(res);
+  });
 };
 
 // сохранение на сервере аватара
-const fetchsaveAvatar = (newAvatar) => {
+const fetchSaveAvatar = (newAvatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
       avatar: newAvatar,
     }),
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return Promise.reject(`Ошибка: ${response.status}`);
+  }).then((res) => {
+    return checkResponse(res);
   });
 };
 
 // сохранение на сервере отредактированного профиля
-const fetchsaveProfile = (newName, newDescription) => {
+const fetchSaveProfile = (newName, newDescription) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: config.headers,
@@ -63,11 +53,8 @@ const fetchsaveProfile = (newName, newDescription) => {
       name: newName,
       about: newDescription,
     }),
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return Promise.reject(`Ошибка: ${response.status}`);
+  }).then((res) => {
+    return checkResponse(res);
   });
 };
 
@@ -80,11 +67,8 @@ const fetchAddNewCard = (newCard, newLink) => {
       name: newCard,
       link: newLink,
     }),
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return Promise.reject(`Ошибка: ${response.status}`);
+  }).then((res) => {
+    return checkResponse(res);
   });
 };
 
@@ -93,11 +77,8 @@ const fetchCardDelete = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return Promise.reject(`Ошибка: ${response.status}`);
+  }).then((res) => {
+    return checkResponse(res);
   });
 };
 
@@ -106,11 +87,8 @@ const addLikeCard = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers,
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return Promise.reject(`Ошибка: ${response.status}`);
+  }).then((res) => {
+    return checkResponse(res);
   });
 };
 
@@ -119,21 +97,18 @@ const removeLikeCard = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    return Promise.reject(`Ошибка: ${response.status}`);
+  }).then((res) => {
+    return checkResponse(res);
   });
 };
 
 export {
   addLikeCard,
   removeLikeCard,
-  fetchsaveAvatar,
-  fetchsaveProfile,
+  fetchSaveAvatar,
+  fetchSaveProfile,
   fetchAddNewCard,
-  userPromise,
-  cardsPromise,
+  fetchUserInfo,
+  fetchCardsInfo,
   fetchCardDelete,
 };

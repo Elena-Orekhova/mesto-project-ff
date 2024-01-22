@@ -10,13 +10,6 @@ const closeModal = (popup) => {
   document.removeEventListener("keydown", closeByEsc);
 };
 
-//закрыть МО на х
-document.querySelectorAll(".popup__close").forEach((button) => {
-  const buttonsPopup = button.closest(".popup");
-
-  button.addEventListener("click", () => closeModal(buttonsPopup));
-});
-
 //закрыть МО на esc
 function closeByEsc(evt) {
   if (evt.key === "Escape") {
