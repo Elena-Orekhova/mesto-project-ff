@@ -38,6 +38,8 @@ const linkInput = formNewCardElement.querySelector(".popup__input_type_url");
 const imagePopup = document.querySelector(".popup_type_image");
 const imagePopupImage = imagePopup.querySelector(".popup__image");
 const imagePopupCaption = imagePopup.querySelector(".popup__caption");
+const popupDeleteCard = document.querySelector(".popup_type_card-delete");
+const popupDeleteSubmitButton = popupDeleteCard.querySelector(".popup__button");
 const validationConfig = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
@@ -82,14 +84,16 @@ function handleEditAvatar(evt) {
   // сохранение на сервере аватара
   fetchSaveAvatar(newAvatar)
     .then((updatedUser) => {
-      handleSuccessSave(popupAvatarProfile);
+      closeModal(popupAvatarProfile);
       profileAvatarElement.style.backgroundImage = `url('${updatedUser.avatar}')`;
-    })
-    .then(() => {
       formEditAvatar.reset();
+      clearValidation(popupAvatarProfile, validationConfig);
     })
     .catch((error) => {
       console.error("Произошла ошибка при сохранении данных:", error);
+    })
+    .finally(() => {
+      setDefaultButtonText(popupAvatarProfile);
     });
 }
 
@@ -144,27 +148,27 @@ function handleNewCardSubmit(evt) {
         openDeleteConfirmationPopup,
         toggleLikeCard
       );
-      handleSuccessSave(popupNewCard);
+      closeModal(popupNewCard);
       cardsContainer.prepend(cardElement);
-    })
-    .then(() => {
       clearValidation(popupNewCard, validationConfig);
       formNewCardElement.reset();
     })
     .catch((error) => {
       console.error("Произошла ошибка:", error);
+    })
+    .finally(() => {
+      setDefaultButtonText(popupNewCard);
     });
 }
 
 // Функция для обработки сабмита попапа подтверждения
 let cardForDelete = {};
 const handleDeleteConfirmation = () => {
-  if (cardForDelete) {
+  if (cardForDelete.id) {
     fetchCardDelete(cardForDelete.id)
       .then(() => {
         removeCard(cardForDelete.element);
         closeModal(popupDeleteCard);
-        cardForDelete = {};
       })
       .catch((error) => {
         console.error("Произошла ошибка при удалении карточки:", error);
@@ -179,15 +183,13 @@ const openDeleteConfirmationPopup = (cardId, cardElement) => {
 };
 
 // Устанавливаем обработчик сабмита попапа подтверждения
-const popupDeleteCard = document.querySelector(".popup_type_card-delete");
-const popupDeleteCardElement = popupDeleteCard.querySelector(".popup__button");
-popupDeleteCardElement.addEventListener("click", handleDeleteConfirmation);
+popupDeleteSubmitButton.addEventListener("click", handleDeleteConfirmation);
 
 // открыть попап "открыть картинку"
 function openImagePopup(card) {
   imagePopupImage.src = card.link;
-  imagePopupImage.alt = card.caption;
-  imagePopupCaption.textContent = card.caption;
+  imagePopupImage.alt = card.name;
+  imagePopupCaption.textContent = card.name;
   openModal(imagePopup);
 }
 
@@ -229,7 +231,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // открыть попап редактировать аватар
 profileAvatarElement.addEventListener("click", function () {
-  clearValidation(popupAvatarProfile, validationConfig);
   openModal(popupAvatarProfile);
 });
 

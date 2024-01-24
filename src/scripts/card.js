@@ -28,14 +28,13 @@ const createCard = (
   }
 
   // Проверка, является ли текущий пользователь владельцем карточки
-  const deleteButtonElement = cardElement.querySelector(".card__delete-button");
   if (card.owner._id !== userId) {
-    deleteButtonElement.style.visibility = "hidden";
+    deleteButton.style.visibility = "hidden";
+  } else {
+    deleteButton.addEventListener("click", () =>
+      openDeleteConfirmationPopup(card._id, cardElement)
+    );
   }
-
-  deleteButton.addEventListener("click", () =>
-    openDeleteConfirmationPopup(card._id, cardElement)
-  );
   cardLikeButton.addEventListener("click", () => {
     toggleLikeCard(card._id, cardElement);
   });
